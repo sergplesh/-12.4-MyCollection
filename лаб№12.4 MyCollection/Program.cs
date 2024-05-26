@@ -86,6 +86,7 @@ namespace лаб_12._4_MyCollection
                 Console.WriteLine("5.Удалить заданный элемент");
                 Console.WriteLine("6.Поиск заданного элемента");
                 Console.WriteLine("7.Очистить хэш-таблицу");
+                Console.WriteLine("8.Перенести элементы коллекции в массив и вывести их");
                 Console.WriteLine("0.Закончить работу с хэш-таблицей");
                 Console.WriteLine("Выберите пункт меню");
                 answer = EnterNumber.EnterIntNumber(); // выбираем действие
