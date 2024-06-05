@@ -95,6 +95,49 @@ namespace лаб_12._4_MyCollection
         }
 
         /// <summary>
+        /// Поверхностное копирование коллекции
+        /// </summary>
+        /// <returns>Новая коллекция с поверхностным копированием элементов</returns>
+        public MyCollection<T> ShallowCopy()
+        {
+            // Создаём новую пустую коллекцию той же размерности и с тем же коэффициентом заполняемости
+            MyCollection<T> newCollection = new MyCollection<T>(Capacity, fillRatio);
+            newCollection.count = count; // копируем количество записей
+            // проходимся по массиву и переписываем, клонируя, все значения
+            for (int i = 0; i < table.Length; i++)
+            {
+                newCollection.table[i] = table[i]; // прикрепляем ссылку на исходный объект
+                newCollection.flags[i] = flags[i]; // прикрепляем ссылку на исходный флаг
+            }
+            return newCollection; // возвращаем поверхностную копию
+        }
+
+        /// <summary>
+        /// Глубокое копирование коллекции
+        /// </summary>
+        /// <returns>Новая коллекция с глубоким копированием элементов</returns>
+        public MyCollection<T> DeepCopy()
+        {
+            // Создаём новую пустую коллекцию той же размерности и с тем же коэффициентом заполняемости
+            MyCollection<T> newCollection = new MyCollection<T>(Capacity, fillRatio);
+            // проходимся по массиву и переписываем, клонируя, все значения
+            for (int i = 0; i < table.Length; i++)
+            {
+                if (flags[i] == 1 && table[i] != null) // если ячейка занята
+                {
+                    newCollection.table[i] = (T)table[i].Clone(); // клонируем значение ячейки
+                    newCollection.flags[i] = 1; // фиксируем занятость ячейки
+                }
+                else // иначе, если элемента в ячейке нет
+                {
+                    newCollection.flags[i] = flags[i]; // то просто фиксируем состояние ячейки 
+                }
+            }
+            newCollection.count = count; // копируем количество записей
+            return newCollection; // возвращаем глубокую копию
+        }
+
+        /// <summary>
         /// Получение перечислителя для элементов хэш-таблицы (обобщённный)
         /// </summary>
         public IEnumerator<T> GetEnumerator()

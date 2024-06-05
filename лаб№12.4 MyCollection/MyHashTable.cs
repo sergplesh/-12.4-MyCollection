@@ -82,9 +82,8 @@ namespace лаб_12._4_MyCollection
         /// Получение индекса в хэш-таблице для элемента
         /// </summary>
         /// <param name="data">элемент</param>
-        /// <returns></returns>
-        // private (так как вспомогательный метод в рамках данного класса)
-        public int GetIndex(T data)
+        /// <returns>результат хэш-функции</returns>
+        public int GetIndex(T data) // private (так как вспомогательный метод в рамках данного класса), но public для тестирования
         {
             return Math.Abs(data.GetHashCode()) % Capacity; // высчитываем хэш-код элемента по модулю размерности хэш-таблицы
         }
@@ -103,6 +102,7 @@ namespace лаб_12._4_MyCollection
         /// Удаление заданного элемента из хэш-таблицы
         /// </summary>
         /// <param name="data">удаляемый элемент</param>
+        /// <returns></returns>
         public bool RemoveData(T data)
         {
             // ищем место в таблице, где расположен элемент, который хотим удалить
@@ -122,7 +122,19 @@ namespace лаб_12._4_MyCollection
         /// <param name="item">добавляемый элемент</param>
         public bool AddItem(T item)
         {
-            if (((double)(Count + 1) / Capacity) > fillRatio) // превысили коэффициент заполненности
+            if (item == null) return false;
+            // случай если размерность равна нулю
+            if (Capacity == 0) // если размерность была равна нулю, то устанавливаем размерность равную 1
+            {
+                table = new T[1]; // пустая хэш-таблица вдвое увеличенной размерности
+                flags = new int[1]; // обнуляем состояния всех ячеек (так как сейчас все ячейки "пусты")
+                AddData(item); // сразу добавляем заданный элемент
+                return true; // и возвращаем true
+            }
+            // если такой элемент уже есть в хэш-таблице, то не добавляем
+            if (Contains(item)) return false;
+            // превысили коэффициент заполненности
+            if (((double)(Count + 1) / Capacity) > fillRatio)
             {
                 // увеличиваем таблицу в 2 раза и переписываем всю информацию
                 T[] temp = (T[])table.Clone(); // сохраняем изначальную хэш-таблицу: из неё будем переписывать элементы в новую
@@ -134,13 +146,9 @@ namespace лаб_12._4_MyCollection
                 for (int i = 0; i < temp.Length; i++)
                     AddData(temp[i]);
             }
-            //добавляем новый элемент, но при условии, что такого элемента ещё нет в хэш-таблице, и это не null
-            if (item != null && !Contains(item))
-            {
-                AddData(item);
-                return true; // добавление произошло
-            }
-            else return false; // добавление не произошло (в случае если добавляем дубликат или null)
+            //добавляем новый элемент (не дубликат и не null)
+            AddData(item);
+            return true; // добавление произошло
         }
 
         /// <summary>

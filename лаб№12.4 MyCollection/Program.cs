@@ -79,7 +79,7 @@ namespace лаб_12._4_MyCollection
             int answer;
             do
             {
-                Console.WriteLine("1.Сформировать хэш-таблицу вручную");
+                Console.WriteLine("1.Сформировать хэш-таблицу вручную (ЧЕРЕЗ ДОБАВЛЕНИЕ)");
                 Console.WriteLine("2.Сформировать с помощью ДСЧ хэш-таблицу (размерностью 28, содержащая 20 элементов, к-т заполненности = 0,714)");
                 Console.WriteLine("3.Распечатать хэш-таблицу С ПОМОЩЬЮ FOREACH");
                 Console.WriteLine("4.Добавить в хэш-таблицу элемент");
@@ -87,24 +87,22 @@ namespace лаб_12._4_MyCollection
                 Console.WriteLine("6.Поиск заданного элемента");
                 Console.WriteLine("7.Очистить хэш-таблицу");
                 Console.WriteLine("8.Перенести элементы коллекции в массив и вывести их");
+                Console.WriteLine("9.Сформировать хэш-таблицу вручную (ЧЕРЕЗ КОНСТРУКТОР КОПИРОВАНИЯ)");
+                Console.WriteLine("10.Выполнить поверхностное копирование коллекции");
+                Console.WriteLine("11.Выполнить глубокое копирование коллекции");
                 Console.WriteLine("0.Закончить работу с хэш-таблицей");
-                Console.WriteLine("Выберите пункт меню");
-                answer = EnterNumber.EnterIntNumber(); // выбираем действие
+                //Console.WriteLine("Выберите пункт меню");
+                answer = EnterNumber.EnterIntNumber("Выберите пункт меню", 0); // выбираем действие
                 switch (answer)
                 {
                     case 1: // первый выбор (Хэш-тааблица вручную)
                         {
                             // Вводим количество элементов, которые хотим ввести
-                            Console.WriteLine("Введите количество объектов");
-                            int count = EnterNumber.EnterIntNumber(); // вводим количество элементов, которыми будем заполнять хэш-таблицу
-                            while (count < 0)
-                            {
-                                Console.WriteLine("Количество элементов не может быть отрицательным. Введите количество снова.");
-                                count = EnterNumber.EnterIntNumber(); // вводим количество элементов, которыми будем заполнять хэш-таблицу
-                            }
-                            // Высчитываем, опираясь на коэффициент заполняемости(72%), размерность хэш-ьаблицы для count элементов
-                            int size = (int)Math.Ceiling(count / 0.72);
-                            table = new MyCollection<Shape>(size); // выделяем память для хэш-таблицы посчитанной размерности 
+                            //Console.WriteLine("Введите количество объектов");
+                            int count = EnterNumber.EnterIntNumber("Введите количество объектов", 0); // вводим количество элементов, которыми будем заполнять хэш-таблицу
+                            //// Высчитываем, опираясь на коэффициент заполняемости(72%), размерность хэш-ьаблицы для count элементов
+                            //int size = (int)Math.Ceiling(count / 0.72);
+                            table = new MyCollection<Shape>(count); // выделяем память для хэш-таблицы посчитанной размерности 
                             // Заполняем хэш-таблицу элементами
                             Shape added = new Shape();
                             for (int i = 0; i < count; i++)
@@ -112,7 +110,7 @@ namespace лаб_12._4_MyCollection
                                 Console.WriteLine($"Ввод {i + 1} фигуры");
                                 // вводим фигуру для добавления
                                 added = InitShape();
-                                table.AddItem((Shape)added.Clone()); // добавляем в хэш-таблицу
+                                table.Add(added); // добавляем в хэш-таблицу
                             }
                             // Вывод результата
                             Console.WriteLine("Сформированная вами хэш-таблица:");
@@ -130,28 +128,28 @@ namespace лаб_12._4_MyCollection
                             {
                                 Shape s = new Shape();
                                 s.RandomInit();
-                                table.AddItem((Shape)s.Clone()); // добавляем в хэш-таблицу
+                                table.Add(s); // добавляем в хэш-таблицу
                             }
                             // окружности
                             for (int i = 5; i < 10; i++)
                             {
                                 Circle c = new Circle();
                                 c.RandomInit();
-                                table.AddItem((Circle)c.Clone()); // добавляем в хэш-таблицу
+                                table.Add(c); // добавляем в хэш-таблицу
                             }
                             // прямоугольники
                             for (int i = 10; i < 15; i++)
                             {
                                 Rectangle r = new Rectangle();
                                 r.RandomInit();
-                                table.AddItem((Rectangle)r.Clone()); // добавляем в хэш-таблицу
+                                table.Add(r); // добавляем в хэш-таблицу
                             }
                             // параллелепипеды
                             for (int i = 15; i < 20; i++)
                             {
                                 Parallelepiped p = new Parallelepiped();
                                 p.RandomInit();
-                                table.AddItem((Parallelepiped)p.Clone()); // добавляем в хэш-таблицу
+                                table.Add(p); // добавляем в хэш-таблицу
                             }
                             Console.WriteLine("Сформированная вами хэш-таблица:");
                             table.Print();
@@ -233,15 +231,10 @@ namespace лаб_12._4_MyCollection
                             if (table.Count != 0)
                             {
                                 // Вводим индекс, с которого заполняем массив элементами
-                                Console.WriteLine("Введите индекс, с которого хотите заполнить элементами массив");
-                                int index = EnterNumber.EnterIntNumber(); // вводим индекс
-                                while (index < 0)
-                                {
-                                    Console.WriteLine("индекс не может быть отрицательным. Введите индекс снова.");
-                                    index = EnterNumber.EnterIntNumber(); // вводим количество элементов, которыми будем заполнять хэш-таблицу
-                                }
+                                //Console.WriteLine("Введите позицию, с которой хотите заполнить элементами массив");
+                                int index = EnterNumber.EnterIntNumber("Введите позицию, с которой хотите заполнить элементами массив", 0); // вводим позицию
                                 // массив, котрый заполним элементами
-                                Shape[] array = new Shape[table.Count + index];
+                                Shape[] array = new Shape[table.Count + (index - 1)];
                                 table.CopyTo(array, index);
                                 Console.WriteLine("Элементы коллекции:");
                                 foreach (Shape shape in array)
@@ -250,6 +243,63 @@ namespace лаб_12._4_MyCollection
                                 }
                             }
                             else Console.WriteLine("хэш-таблица пуста");
+                            break;
+                        }
+                    case 9: // девятый выбор (формирование коллекции на основе другой коллекции)
+                        {
+                            // Вводим количество элементов, которые хотим ввести
+                            //Console.WriteLine("Введите количество объектов");
+                            int count = EnterNumber.EnterIntNumber("Введите количество объектов", 0); // вводим количество элементов, которыми будем заполнять хэш-таблицу
+                            //// Высчитываем, опираясь на коэффициент заполняемости(72%), размерность хэш-ьаблицы для count элементов
+                            //int size = (int)Math.Ceiling(count / 0.72);
+                            MyCollection<Shape> temp = new MyCollection<Shape>(count); // выделяем память для хэш-таблицы посчитанной размерности 
+                            // Заполняем хэш-таблицу элементами
+                            Shape added = new Shape();
+                            for (int i = 0; i < count; i++)
+                            {
+                                Console.WriteLine($"Ввод {i + 1} фигуры");
+                                // вводим фигуру для добавления
+                                added = InitShape();
+                                temp.Add(added); // добавляем в хэш-таблицу
+                            }
+                            table = new MyCollection<Shape>(temp); // конструктор копирования
+                            // Вывод результата
+                            Console.WriteLine("Сформированная вами хэш-таблица:");
+                            table.Print();
+                            break;
+                        }
+                    case 10: // десятый выбор (поверхностное копирование)
+                        {
+                            MyCollection<Shape> shallowCopy = table.ShallowCopy();
+                            Console.WriteLine("Исходная коллекция:");
+                            table.Print();
+                            Console.WriteLine("Поверхностная копия:");
+                            shallowCopy.Print();
+                            Console.WriteLine("Изменим все значения в поверхностной копии на <Бабочка>");
+                            foreach (Shape shape in shallowCopy)
+                                shape.Name = "Бабочка";
+                            Console.WriteLine("РЕЗУЛЬТАТ:");
+                            Console.WriteLine("Исходная коллекция:");
+                            table.Print();
+                            Console.WriteLine("Поверхностная копия:");
+                            shallowCopy.Print();
+                            break;
+                        }
+                    case 11: // одиннадцатый выбор (глубокая копия)
+                        {
+                            MyCollection<Shape> deepCopy = table.DeepCopy();
+                            Console.WriteLine("Исходная коллекция:");
+                            table.Print();
+                            Console.WriteLine("Глубокая копия:");
+                            deepCopy.Print();
+                            Console.WriteLine("Изменим все значения в глубокой копии на <Бабочка>");
+                            foreach (Shape shape in deepCopy)
+                                shape.Name = "Бабочка";
+                            Console.WriteLine("РЕЗУЛЬТАТ:");
+                            Console.WriteLine("Исходная коллекция:");
+                            table.Print();
+                            Console.WriteLine("Глубокая копия:");
+                            deepCopy.Print();
                             break;
                         }
                     case 0: // программа продолжит работу

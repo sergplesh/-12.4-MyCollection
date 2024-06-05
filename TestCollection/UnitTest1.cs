@@ -7,9 +7,8 @@ namespace TestCollection
     [TestClass]
     public class UnitTestCollection
     {
-
         [TestMethod]
-        public void Clear_RemovesAllElementsFromCollection()
+        public void Clear_RemovesAllElementsFromCollection() // удаление коллекции
         {
             // Arrange
             MyCollection<Shape> collection = new MyCollection<Shape>();
@@ -28,7 +27,7 @@ namespace TestCollection
         }
 
         [TestMethod]
-        public void CopyTo_CopiesElementsToArray()
+        public void CopyTo_CopiesElementsToArray() // копирование элементов коллекции в массив
         {
             // Arrange
             MyCollection<Shape> collection = new MyCollection<Shape>(1);
@@ -50,6 +49,154 @@ namespace TestCollection
         }
 
         [TestMethod]
+        public void CopyTo_ThrowsArgumentNullException_ArrayNull() // Исключение для null-массива в CopyTo
+        {
+            // Arrange
+            MyCollection<Shape> collection = new MyCollection<Shape>();
+            Shape[] array = null;
+
+            // Act and Assert
+            Assert.ThrowsException<ArgumentNullException>(() => collection.CopyTo(array, 0));
+        }
+
+        [TestMethod]
+        public void CopyTo_ThrowsArgumentOutOfRangeException_IndexIsNegative() // Исключение для отрицательного индекса в CopyTo
+        {
+            // Arrange
+            MyCollection<Shape> collection = new MyCollection<Shape>();
+            Shape[] array = new Shape[10];
+
+            // Act and Assert
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => collection.CopyTo(array, -1));
+        }
+
+        [TestMethod]
+        public void CopyTo_ThrowsArgumentException_ArrayTooSmall() // Исключение в CopyTo, если в массив не уместятся все элементы в коллекции
+        {
+            // Arrange
+            MyCollection<Shape> collection = new MyCollection<Shape>();
+            Shape element1 = new Shape("елемент1", 1);
+            Shape element2 = new Shape("елемент2", 2);
+            collection.Add(element1);
+            collection.Add(element2);
+            Shape[] array = new Shape[1];
+
+            // Act and Assert
+            Assert.ThrowsException<ArgumentException>(() => collection.CopyTo(array, 0));
+        }
+
+        [TestMethod]
+        public void Constructor_CreatesCollectionWithSameElements() // конструктор копирования
+        {
+            // Arrange
+            MyCollection<Shape> originalCollection = new MyCollection<Shape>();
+            Shape element1 = new Shape("елемент1", 1);
+            Shape element2 = new Shape("елемент2", 2);
+            originalCollection.Add(element1);
+            originalCollection.Add(element2);
+
+            // Act
+            MyCollection<Shape> newCollection = new MyCollection<Shape>(originalCollection);
+
+            // Assert
+            Assert.AreEqual(originalCollection.Count, newCollection.Count);
+
+            foreach (var item in originalCollection)
+            {
+                Assert.IsTrue(newCollection.Contains(item));
+            }
+        }
+
+        [TestMethod]
+        public void TestRemoveItemCollection_Existent() // Удаление существующего в хэш-таблице элемента
+        {
+            // Arrange
+            MyCollection<Shape> collection = new MyCollection<Shape>();
+            collection.Add(new Shape("элемент", 1));
+            collection.Add(new Shape("элемент", 2));
+
+            // Act
+            bool removed = collection.Remove(new Shape("элемент", 2));
+
+            // Assert
+            Assert.IsTrue(removed);
+            Assert.IsFalse(collection.Contains(new Shape("элемент", 2))); // убедимся, что элемент удалён
+        }
+
+        [TestMethod]
+        public void TestRemoveItemCollection_NonExistent() // Удаление НЕ существующего в хэш-таблице элемента
+        {
+            // Arrange
+            MyCollection<Shape> collection = new MyCollection<Shape>();
+            collection.AddItem(new Shape("элемент", 1));
+            collection.AddItem(new Shape("элемент", 2));
+
+            // Act
+            bool notAdded = collection.Remove(new Shape("элемент", 100)); // попытка удаления элемента, который не был добавлен
+
+            // Assert
+            Assert.IsFalse(notAdded); // удаление не произошло
+        }
+
+        [TestMethod]
+        public void DeepCopyCollection() // тест для глубокой копии коллекции
+        {
+            // Arrange
+            MyCollection<Shape> collection = new MyCollection<Shape>();
+            for (int i = 0; i < 5; i++) // случайно инициализируем исходную коллекцию
+            {
+                Shape s = new Shape();
+                s.RandomInit();
+                collection.Add(s); // добавляем в хэш-таблицу
+            }
+            MyCollection<Shape> deepCopy = collection.DeepCopy();
+
+            // Act
+            foreach (Shape shape in deepCopy) // Изменим все значения в поверхностной копии на <Бабочка>
+                shape.Name = "Бабочка";
+
+            // Assert
+            // только в глубокой копии элементы должны были поменять название, в исходной должны были остаться без изменений
+            foreach (Shape shape in collection)
+            {
+                Assert.AreNotEqual(shape.Name, "Бабочка");
+            }
+            foreach (Shape shape in deepCopy)
+            {
+                Assert.AreEqual(shape.Name, "Бабочка");
+            }
+        }
+
+        [TestMethod]
+        public void ShallowCopyCollection() // тест для поверхностной копии коллекции
+        {
+            // Arrange
+            MyCollection<Shape> collection = new MyCollection<Shape>();
+            for (int i = 0; i < 5; i++) // случайно инициализируем исходную коллекцию
+            {
+                Shape s = new Shape();
+                s.RandomInit();
+                collection.Add(s); // добавляем в хэш-таблицу
+            }
+            MyCollection<Shape> shallowCopy = collection.ShallowCopy();
+
+            // Act
+            foreach (Shape shape in shallowCopy) // Изменим все значения в поверхностной копии на <Бабочка>
+                shape.Name = "Бабочка";
+
+            // Assert
+            // и в исходной коллекции, и в поверхностной копии все элементы должны иметь название "Бабочка"
+            foreach (Shape shape in collection)
+            {
+                Assert.AreEqual(shape.Name, "Бабочка");
+            }
+            foreach (Shape shape in shallowCopy)
+            {
+                Assert.AreEqual(shape.Name, "Бабочка");
+            }
+        }
+
+        [TestMethod]
         public void TestEnumerator()
         {
             // Arrange
@@ -67,119 +214,25 @@ namespace TestCollection
             foreach (Shape shape in collection)
             {
                 i++;
-                if (shape.id.Number == 1) Assert.IsTrue(shape.Equals(new Shape("елемент" + i.ToString(), i)));
-                if (shape.id.Number == 2) Assert.IsTrue(shape.Equals(new Shape("елемент" + i.ToString(), i)));
+                if (shape.id.Number == i) Assert.AreEqual(shape, new Shape("елемент" + i.ToString(), i));
             }
             Assert.AreEqual(exceptedCount, i);
         }
 
         [TestMethod]
-        public void CopyTo_ThrowsArgumentNullException_ArrayNull()
+        public void IsReadOnly_ReturnsFalse() // тест для свойства isReadOnly
         {
             // Arrange
             MyCollection<Shape> collection = new MyCollection<Shape>();
-            Shape[] array = null;
 
-            // Act and Assert
-            Assert.ThrowsException<ArgumentNullException>(() => collection.CopyTo(array, 0));
+            // Act
+            bool isReadOnly = collection.IsReadOnly;
+
+            // Assert
+            Assert.IsFalse(isReadOnly);
         }
 
-        [TestMethod]
-        public void CopyTo_ThrowsArgumentOutOfRangeException_IndexIsNegative()
-        {
-            // Arrange
-            MyCollection<Shape> collection = new MyCollection<Shape>();
-            Shape[] array = new Shape[10];
 
-            // Act and Assert
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => collection.CopyTo(array, -1));
-        }
-
-        [TestMethod]
-        public void CopyTo_ThrowsArgumentException_ArrayTooSmall()
-        {
-            // Arrange
-            MyCollection<Shape> collection = new MyCollection<Shape>();
-            Shape element1 = new Shape("елемент1", 1);
-            Shape element2 = new Shape("елемент2", 2);
-            collection.Add(element1);
-            collection.Add(element2);
-            Shape[] array = new Shape[1];
-
-            // Act and Assert
-            Assert.ThrowsException<ArgumentException>(() => collection.CopyTo(array, 0));
-        }
-
-        [TestClass]
-        public class MyCollectionTests
-        {
-            // Test for the constructor with another collection and fillRatio
-            [TestMethod]
-            public void Constructor_CreatesCollectionWithSameElements()
-            {
-                // Arrange
-                MyCollection<Shape> originalCollection = new MyCollection<Shape>();
-                Shape element1 = new Shape("елемент1", 1);
-                Shape element2 = new Shape("елемент2", 2);
-                originalCollection.Add(element1);
-                originalCollection.Add(element2);
-
-                // Act
-                MyCollection<Shape> newCollection = new MyCollection<Shape>(originalCollection);
-
-                // Assert
-                Assert.AreEqual(originalCollection.Count, newCollection.Count);
-
-                foreach (var item in originalCollection)
-                {
-                    Assert.IsTrue(newCollection.Contains(item));
-                }
-            }
-
-            [TestMethod]
-            public void TestRemoveItemCollection_Existent() // Удаление существующего в хэш-таблице элемента
-            {
-                // Arrange
-                MyCollection<Shape> collection = new MyCollection<Shape>();
-                collection.Add(new Shape("элемент", 1));
-                collection.Add(new Shape("элемент", 2));
-
-                // Act
-                bool removed = collection.Remove(new Shape("элемент", 2));
-
-                // Assert
-                Assert.IsTrue(removed);
-                Assert.IsFalse(collection.Contains(new Shape("элемент", 2))); // убедимся, что элемент удалён
-            }
-
-            [TestMethod]
-            public void TestRemoveItemCollection_NonExistent() // Удаление НЕ существующего в хэш-таблице элемента
-            {
-                // Arrange
-                MyCollection<Shape> collection = new MyCollection<Shape>();
-                collection.AddItem(new Shape("элемент", 1));
-                collection.AddItem(new Shape("элемент", 2));
-
-                // Act
-                bool notAdded = collection.Remove(new Shape("элемент", 100)); // попытка удаления элемента, который не был добавлен
-
-                // Assert
-                Assert.IsFalse(notAdded); // удаление не произошло
-            }
-
-            [TestMethod]
-            public void IsReadOnly_ReturnsFalse()
-            {
-                // Arrange
-                MyCollection<Shape> collection = new MyCollection<Shape>();
-
-                // Act
-                bool isReadOnly = collection.IsReadOnly;
-
-                // Assert
-                Assert.IsFalse(isReadOnly);
-            }
-        }
 
 
 
@@ -202,6 +255,23 @@ namespace TestCollection
             {
                 // Arrange
                 MyHashTable<Shape> hashTable = new MyHashTable<Shape>();
+                int expectedCount = 3;
+
+                // Act
+                hashTable.AddItem(new Shape("элемент", 1));
+                hashTable.AddItem(new Shape("элемент", 2));
+                hashTable.AddItem(new Shape("элемент", 3));
+
+                // Assert
+                // все элементы разные - должны все добавиться
+                Assert.AreEqual(expectedCount, hashTable.Count);
+            }
+
+            [TestMethod]
+            public void TestAddItem_ZeroCapacity() // Добавление элемента в хэш-таблицу нулевой размерности
+            {
+                // Arrange
+                MyHashTable<Shape> hashTable = new MyHashTable<Shape>(0);
                 int expectedCount = 3;
 
                 // Act
@@ -545,7 +615,7 @@ namespace TestCollection
                 //hashTable.RemoveData(hashTable.table[hashTable.GetIndex(temp) - 5]);
 
                 // Assert
-                Assert.IsTrue(hashTable.FindItem(temp) < hashTable.GetIndex(temp) && hashTable.FindItem(temp) > 1); // Поиск выдаст индекс до назначенного места (но не первые две позиции таблицы)
+                Assert.IsTrue(place < hashTable.GetIndex(temp) && place > 1); // Поиск выдаст индекс до назначенного места (но не первые две позиции таблицы)
             }
 
             [TestMethod]
