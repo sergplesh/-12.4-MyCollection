@@ -101,7 +101,7 @@ namespace TestCollection
             // Assert
             Assert.AreEqual(originalCollection.Count, newCollection.Count);
 
-            foreach (var item in originalCollection)
+            foreach (Shape item in originalCollection)
             {
                 Assert.IsTrue(newCollection.Contains(item));
             }
