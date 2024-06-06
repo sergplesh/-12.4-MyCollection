@@ -234,12 +234,19 @@ namespace лаб_12._4_MyCollection
                                 //Console.WriteLine("Введите позицию, с которой хотите заполнить элементами массив");
                                 int index = EnterNumber.EnterIntNumber("Введите позицию, с которой хотите заполнить элементами массив", 0); // вводим позицию
                                 // массив, котрый заполним элементами
-                                Shape[] array = new Shape[table.Count + (index - 1)];
-                                table.CopyTo(array, index);
-                                Console.WriteLine("Элементы коллекции:");
-                                foreach (Shape shape in array)
+                                Shape[] array = new Shape[table.Count + index];
+                                try // исключения быть не должно, но метод способен его выдать
                                 {
-                                    if (shape != null) Console.WriteLine(shape);
+                                    table.CopyTo(array, index);
+                                    Console.WriteLine("Элементы коллекции:");
+                                    foreach (Shape shape in array)
+                                    {
+                                        if (shape != null) Console.WriteLine(shape);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine(ex.Message);
                                 }
                             }
                             else Console.WriteLine("хэш-таблица пуста");
