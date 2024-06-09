@@ -230,14 +230,14 @@ namespace лаб_12._4_MyCollection
                         {
                             if (table.Count != 0)
                             {
-                                // Вводим индекс, с которого заполняем массив элементами
+                                // Вводим позицию, с которой заполняем массив элементами
                                 //Console.WriteLine("Введите позицию, с которой хотите заполнить элементами массив");
-                                int index = EnterNumber.EnterIntNumber("Введите позицию, с которой хотите заполнить элементами массив", 0); // вводим позицию
+                                int index = EnterNumber.EnterIntNumber("Введите позицию, с которой хотите заполнить элементами массив", 1); // вводим позицию
                                 // массив, котрый заполним элементами
-                                Shape[] array = new Shape[table.Count + index];
+                                Shape[] array = new Shape[table.Count + (index - 1)];
                                 try // исключения быть не должно, но метод способен его выдать
                                 {
-                                    table.CopyTo(array, index);
+                                    table.CopyTo(array, (index - 1));
                                     Console.WriteLine("Элементы коллекции:");
                                     foreach (Shape shape in array)
                                     {
