@@ -192,7 +192,7 @@ namespace лаб_12._4_MyCollection
                             if (table.Count == 0) Console.WriteLine("В хэш-таблице отсутствуют элементы, для удаления добавьте в неё элементы");
                             else
                             {
-                                // Вводим фигуру, которую хотим добавить
+                                // Вводим фигуру, которую хотим удалить
                                 Shape removed = InitShape("Введите фигуру, которую хотите удалить");
                                 // Удаляем
                                 bool isRemoved = table.Remove(removed);
